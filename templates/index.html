@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/static/output.css" rel="stylesheet" />
+  </head>
+  <body class="bg-gray-900 text-gray-100 p-6">
+    <div
+      class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+    >
+      <div
+        class="bg-gray-800 text-white rounded-lg shadow-lg p-4 max-w-md w-full"
+      >
+        <h1 class="text-3xl font-bold text-center">test</h1>
+
+        <form
+          id="backtestForm"
+          class="max-w-lg mx-auto p-2 bg-gray-800 rounded-lg shadow-lg space-y-4"
+        >
+          <div>
+            <label
+              class="block font-semibold mb-1 text-gray-200 text-xl"
+              for="symbol"
+              >股票代號</label
+            >
+            <input
+              type="text"
+              id="symbol"
+              name="symbol"
+              placeholder="2330.TW"
+              class="input input-bordered w-full bg-gray-700 text-white border-gray-600 ps-2"
+              required
+            />
+          </div>
+          <div>
+            <label
+              class="block font-semibold mb-1 text-gray-200 text-xl"
+              for="sma"
+              >均線天數</label
+            >
+            <input
+              type="number"
+              id="sma"
+              name="sma"
+              placeholder="20"
+              class="input input-bordered w-full bg-gray-700 text-white border-gray-600 ps-2"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-full">開始回測</button>
+        </form>
+
+        <div
+          id="result"
+          class="max-w-lg mx-auto mt-6 p-4 bg-gray-800 rounded-lg shadow-lg hidden"
+        >
+          <h2 class="font-bold text-lg mb-2 text-white">回測結果</h2>
+          <p id="resultText" class="text-gray-200"></p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("backtestForm");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const res = await fetch("/api/data", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        console.log(data);
+        document.getElementById("result").classList.remove("hidden");
+        document.getElementById(
+          "resultText"
+        ).innerText = `股票: ${data.symbol}, SMA: ${data.sma}, 總策略報酬: ${data.strategy_return}%`;
+      });
+    </script>
+  </body>
+</html>
