@@ -30,10 +30,14 @@
               type="text"
               id="symbol"
               name="symbol"
-              placeholder="2330.TW"
+              placeholder="請輸入代碼"
               class="input input-bordered w-full bg-gray-700 text-white border-gray-600 ps-2"
               required
             />
+            <ul
+              id="suggestions"
+              class="bg-gray-800 text-white mt-1 rounded shadow-lg hidden"
+            ></ul>
           </div>
           <div>
             <label
@@ -64,7 +68,36 @@
     </div>
 
     <script>
+      const input = document.getElementById("symbol");
+      const suggestions = document.getElementById("suggestions");
       const form = document.getElementById("backtestForm");
+
+      input.addEventListener("input", async () => {
+        const query = input.value;
+        if (!query) {
+          suggestions.classList.add("hidden");
+          return;
+        }
+
+        // 假設有一個 API 返回符合的股票列表
+        const res = await fetch(`/api/search_stock?q=${query}`);
+        const data = await res.json();
+
+        suggestions.innerHTML = "";
+        data.forEach((item) => {
+          const li = document.createElement("li");
+          li.textContent = item;
+          li.classList.add("cursor-pointer", "p-2", "hover:bg-gray-600");
+          li.addEventListener("click", () => {
+            input.value = item;
+            suggestions.classList.add("hidden");
+          });
+          suggestions.appendChild(li);
+        });
+
+        suggestions.classList.remove("hidden");
+      });
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
