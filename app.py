@@ -6,7 +6,9 @@ import pandas as pd
 
 app = Flask(__name__)
 
+# 還沒設定API_KEY 寫在.env裡面
 FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY')
+print(f"[API_KEY]{FINNHUB_API_KEY}")
 
 @app.route('/')
 def index():

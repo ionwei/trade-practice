@@ -79,17 +79,24 @@
           return;
         }
 
+        // 建立 FormData
+        const formData = new FormData();
+        formData.append("query", query);
+
         // 假設有一個 API 返回符合的股票列表
-        const res = await fetch(`/api/search_stock?q=${query}`);
+        const res = await fetch("/api/search_stock", {
+          method: "POST",
+          body: formData,
+        });
         const data = await res.json();
 
         suggestions.innerHTML = "";
         data.forEach((item) => {
           const li = document.createElement("li");
-          li.textContent = item;
+          li.textContent = `${item.symbol} - ${item.name}`; // 顯示股票代碼與名稱
           li.classList.add("cursor-pointer", "p-2", "hover:bg-gray-600");
           li.addEventListener("click", () => {
-            input.value = item;
+            input.value = item.symbol; // 選中後只填股票代碼
             suggestions.classList.add("hidden");
           });
           suggestions.appendChild(li);
